@@ -1,28 +1,25 @@
 # =========================================
 # 1️⃣ Build stage — compile eBPF + Go binary
 # =========================================
-FROM golang:1.25-1-bookworm AS builder
+FROM golang:1.25-bookworm AS builder
 
 # Install clang, llvm, bpftool (for bpf2go to work)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    clang llvm libbpf-dev bpftool \
+    clang llvm libbpf-dev bpftool make \
     && rm -rf /var/lib/apt/lists/*
 
 # Set workdir
 WORKDIR /app
 
 # Copy go.mod and download deps first (cache layer)
-COPY go.mod go.sum ./
+COPY Makefile ./
+COPY ./app ./app
+RUN go work init ./app
 RUN go mod download
 
 # Copy all source code
-COPY . .
+RUN make
 
-# Generate eBPF bindings (runs bpf2go)
-RUN go generate ./...
-
-# Build Go binary
-RUN CGO_ENABLED=0 go build -o /app/traceapp .
 
 # =========================================
 # 2️⃣ Runtime stage — minimal container
@@ -34,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends bpftool iproute
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY --from=builder /app/traceapp .
+COPY --from=builder /app/bin/mysql-connection-trace .
 
 # eBPF programs require privileged mode & access to /sys
-CMD ["./traceapp"]
+CMD ["./mysql-connection-trace"]
