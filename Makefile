@@ -43,3 +43,7 @@ run: build
 clean:
 	rm -f bpf_$(ARCH)_*.o bpf_$(PROG)_*.go
 	rm -rf $(BINARY)
+
+# Build docker
+docker-build:
+	docker build -t ccr.itim.vn/admins/mysql-connection-trace:latest .
