@@ -1,0 +1,8 @@
+module git.itim.vn/docker/mysql-connection-trace
+
+go 1.24.6
+
+require (
+	github.com/cilium/ebpf v0.19.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
+)
