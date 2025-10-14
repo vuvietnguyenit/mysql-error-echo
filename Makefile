@@ -19,9 +19,14 @@ LDFLAGS := -s -w
 all: build
 
 # Generate eBPF Go code via go:generate
+bpf-gen-btf:
+	@echo ">> generate vmlinux.h using bpftool"
+	bpftool btf dump file /sys/kernel/btf/vmlinux format c > ./$(APP_DIR)/bpf/vmlinux.h
+
 bpf-gen:
 	@echo ">> Generating eBPF Go code using go:generate"
 	@$(GO) generate ./app
+
 
 # Build the Go binary
 build: bpf-gen
