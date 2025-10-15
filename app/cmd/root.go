@@ -7,14 +7,13 @@ import (
 	"log/slog"
 	"os"
 
-	appflag "git.itim.vn/docker/mysql-connection-trace/app/flag"
-	"github.com/cilium/ebpf/rlimit"
+	appflag "git.itim.vn/docker/mysql-response-trace/app/flag"
 	"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "mysql-connection-trace",
+	Use:   "mysql-response-trace",
 	Short: "A brief description of your application",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
@@ -34,11 +33,11 @@ to quickly create a Cobra application.`,
 			}),
 		)
 		slog.SetDefault(logger)
-		if err := rlimit.RemoveMemlock(); err != nil {
-			return err
-		} else {
-			slog.Debug("set rlimit memlock to infinity")
-		}
+		// if err := rlimit.RemoveMemlock(); err != nil {
+		// 	return err
+		// } else {
+		// 	slog.Debug("set rlimit memlock to infinity")
+		// }
 		return nil
 	},
 }
