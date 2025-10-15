@@ -16,7 +16,7 @@ struct data_t {
   __u32 daddr;
   __u16 sport;
   __u16 dport;
-  size_t size;
+  __u32 size;
   char msg[MYSQL_ERRMSG_SIZE];
 };
 
@@ -33,6 +33,7 @@ static __always_inline void send_mysql_event(__u32 saddr, __u32 daddr,
                size);
     size = MYSQL_ERRMSG_SIZE;
   }
+  bpf_printk("size %d", size);
 
   struct data_t *e = bpf_ringbuf_reserve(&events, sizeof(*e), 0);
   if (!e)
