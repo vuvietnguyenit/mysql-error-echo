@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
+	"regexp"
 )
 
 type MySQLPayload []byte
@@ -49,4 +50,10 @@ func IntToIP(ip uint32) net.IP {
 	b := make([]byte, 4)
 	binary.LittleEndian.PutUint32(b, ip)
 	return net.IPv4(b[0], b[1], b[2], b[3])
+}
+
+var mysqlErrorPattern = regexp.MustCompile(`#(?:[A-Z0-9]{5})`)
+
+func IsMySQLErrorMessage(msg []byte) bool {
+	return mysqlErrorPattern.Match(msg)
 }

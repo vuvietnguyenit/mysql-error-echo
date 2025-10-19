@@ -34,6 +34,9 @@ func (d *dataT) GetMsg() string {
 	return string(s)
 }
 func (d *dataT) String() string {
+	if !utils.IsMySQLErrorMessage(d.Msg[:]) {
+		return ""
+	}
 	return fmt.Sprintf(
 		"[%s] respone: %s:%d -> %s:%d | size=%d | msg=%s",
 		time.Now().Format(time.RFC3339),
@@ -103,6 +106,8 @@ func RunEbpfProg() error {
 			fmt.Println("HEX DUMP:")
 			fmt.Printf("%s\n\n", hex.Dump(e.Msg[:]))
 		}
-		fmt.Println(e.String())
+		if e.String() != "" {
+			fmt.Println(e.String())
+		}
 	}
 }
