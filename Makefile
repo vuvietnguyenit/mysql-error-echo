@@ -46,4 +46,7 @@ clean:
 
 # Build docker
 docker-build:
-	docker build -t ccr.itim.vn/admins/$(BINARY):latest .
+	docker build -t $(ARGS) .
+
+docker-push:
+	docker push $(ARGS)
