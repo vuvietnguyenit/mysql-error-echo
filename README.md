@@ -1,7 +1,5 @@
 # mysql-error-echo
 
-Short: Trace MySQL error responses at the kernel level - powered by eBPF.
-
 MySQL Echo eBPF is an eBPF-powered observability tool that traces and inspects MySQL server error responses directly from the kernel, without modifying or instrumenting client applications. It attaches a kprobe to tcp_sendmsg to capture packets sent from the MySQL server to clients and inspects them only for error responses.
 Only error messages returned by MySQL are reported - successful (OK) responses are ignored
 
@@ -95,5 +93,3 @@ Docker image
 ```bash
 # make docker-build ARGS=mysql-error-echo:v1.0.0
 ```
-## Deploy
-This repo you can build as container and run it as Sidecar or DaemonSet
