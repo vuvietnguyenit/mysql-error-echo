@@ -14,6 +14,7 @@ import (
 
 	appflag "git.itim.vn/docker/mysql-response-trace/app/flag"
 	"git.itim.vn/docker/mysql-response-trace/app/internal/utils"
+	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/link"
 	"github.com/cilium/ebpf/ringbuf"
 )
@@ -55,6 +56,13 @@ func RunEbpfProg() error {
 		return err
 	}
 	defer objs.Close()
+
+	key := uint32(0)
+	configMap := objs.ConfigMap
+	if err := configMap.Update(&key, appflag.Port, ebpf.UpdateAny); err != nil {
+		return err
+	}
+	slog.Debug("set port filter", slog.Any("port", appflag.Port))
 
 	// Attach kprobe to tcp_connect
 	kp, err := link.Kprobe("tcp_sendmsg", objs.TcpSendmsg, nil)

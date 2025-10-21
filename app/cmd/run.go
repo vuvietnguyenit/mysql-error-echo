@@ -4,6 +4,10 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"os"
+
+	"log/slog"
+
 	appflag "git.itim.vn/docker/mysql-response-trace/app/flag"
 	"git.itim.vn/docker/mysql-response-trace/app/internal/ebpf"
 	"github.com/spf13/cobra"
@@ -30,5 +34,9 @@ func init() {
 }
 
 func runProgram() {
-	ebpf.RunEbpfProg()
+	err := ebpf.RunEbpfProg()
+	if err != nil {
+		slog.Error("failed to run eBPF program", err)
+		os.Exit(1)
+	}
 }
