@@ -8,21 +8,15 @@ import (
 
 	"log/slog"
 
-	appflag "git.itim.vn/docker/mysql-response-trace/app/flag"
-	"git.itim.vn/docker/mysql-response-trace/app/internal/ebpf"
+	appflag "git.itim.vn/docker/mysql-error-echo/app/flag"
+	"git.itim.vn/docker/mysql-error-echo/app/internal/ebpf"
 	"github.com/spf13/cobra"
 )
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Run the MySQL error response tracing program",
 	Run: func(cmd *cobra.Command, args []string) {
 		runProgram()
 	},

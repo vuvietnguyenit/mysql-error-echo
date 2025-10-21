@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"git.itim.vn/docker/mysql-response-trace/app/internal/utils"
+	"git.itim.vn/docker/mysql-error-echo/app/internal/utils"
 )
 
 func TestParseMySQLPacket(t *testing.T) {

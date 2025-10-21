@@ -1,5 +1,5 @@
 ARCH := x86
-BINARY := mysql-response-trace
+BINARY := mysql-error-echo
 BUILD_DIR := ./bin
 APP_DIR := ./app
 GOSRC     := ./$(APP_DIR)/cmd ./$(APP_DIR)/internal ./$(APP_DIR)/*.go

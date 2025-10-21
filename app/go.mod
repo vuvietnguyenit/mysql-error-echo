@@ -1,4 +1,4 @@
-module git.itim.vn/docker/mysql-response-trace/app
+module git.itim.vn/docker/mysql-error-echo/app
 
 go 1.25.1
 

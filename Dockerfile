@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends bpftool iproute
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY --from=builder /app/bin/mysql-response-trace .
+COPY --from=builder /app/bin/mysql-error-echo .
 
 # eBPF programs require privileged mode & access to /sys
-CMD ["./mysql-response-trace"]
+CMD ["./mysql-error-echo"]

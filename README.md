@@ -1,93 +1,99 @@
-# mysql-connection-trace
+# mysql-error-echo
 
+Short: Trace MySQL error responses at the kernel level - powered by eBPF.
 
+MySQL Echo eBPF is an eBPF-powered observability tool that traces and inspects MySQL server error responses directly from the kernel, without modifying or instrumenting client applications. It attaches a kprobe to tcp_sendmsg to capture packets sent from the MySQL server to clients and inspects them only for error responses.
+Only error messages returned by MySQL are reported - successful (OK) responses are ignored
 
-## Getting started
+**Note: It only supports unencrypted MySQL traffic (when ssl-mode=DISABLE).**
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## How It Works
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://git.itim.vn/docker/mysql-connection-trace.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://git.itim.vn/docker/mysql-connection-trace/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+![flow](static/img/image.png)
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+```bash
+# mysql-error-echo -h
+eBPF to help trace MySQL error responses at the kernel level
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Usage:
+  mysql-error-echo [command]
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  help        Help about any command
+  run         Run the MySQL error response tracing program
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Flags:
+  -h, --help      help for mysql-error-echo
+  -v, --verbose   verbose output print
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Use "mysql-error-echo [command] --help" for more information about a command.
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+For example, if you want to trace error responses from MySQL server (on port 3306) to clients
+```bash
+# mysql-error-echo run --port 3306
+```
+*Result*
+```bash
+{"time":"2025-10-21T15:29:56.123756458+07:00","level":"INFO","msg":"eBPF program loaded and attached to tcp_sendmsg"}
+{"time":"2025-10-21T15:29:56.123881188+07:00","level":"INFO","msg":"Press Ctrl+C to exit..."}
+{"time":"2025-10-21T15:36:30.705346351+07:00","level":"INFO","msg":"mysql response","saddr":"172.18.0.2:3306","daddr":"10.194.60.90:47198","size":55,"msg":"3\u0003\ufffd\ufffd\u0004#08S01Got an error reading communication packets"}
+```
+<details>
+<summary><b>Can add -v (verbose to see full hexdump of response)</b></summary>
 
-## License
-For open source projects, say how it is licensed.
+```bash
+# mysql-error-echo run -v
+{"time":"2025-10-21T15:35:36.208853655+07:00","level":"INFO","msg":"eBPF program loaded and attached to tcp_sendmsg"}
+{"time":"2025-10-21T15:35:36.208873532+07:00","level":"INFO","msg":"Press Ctrl+C to exit..."}
+172.18.0.2:3306 -> 10.194.60.90:47198: size=55
+HEX DUMP:
+00000000  33 00 00 03 ff 86 04 23  30 38 53 30 31 47 6f 74  |3......#08S01Got|
+00000010  20 61 6e 20 65 72 72 6f  72 20 72 65 61 64 69 6e  | an error readin|
+00000020  67 20 63 6f 6d 6d 75 6e  69 63 61 74 69 6f 6e 20  |g communication |
+00000030  70 61 63 6b 65 74 73 00  00 00 00 00 00 00 00 00  |packets.........|
+00000040  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000050  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000060  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000070  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000080  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000090  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000000a0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000000b0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000000c0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000000d0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000000e0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000000f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000100  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000110  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000120  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000130  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000140  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000150  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000160  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000170  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000180  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+00000190  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000001a0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000001b0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000001c0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000001d0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000001e0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000001f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+
+{"time":"2025-10-21T15:36:30.705346351+07:00","level":"INFO","msg":"msql response","saddr":"172.18.0.2:3306","daddr":"10.194.60.90:47198","size":55,"msg":"3\u0003\ufffd\ufffd\u0004#08S01Got an error reading communication packets"} # This is a response that has sent back to client/backend
+```
+
+</details>
+
+## Build
+Docker image
+```bash
+# make docker-build ARGS=mysql-error-echo:v1.0.0
+```
+## Deploy
+This repo you can build as container and run it as Sidecar or DaemonSet

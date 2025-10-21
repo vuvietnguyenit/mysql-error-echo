@@ -7,20 +7,14 @@ import (
 	"log/slog"
 	"os"
 
-	appflag "git.itim.vn/docker/mysql-response-trace/app/flag"
+	appflag "git.itim.vn/docker/mysql-error-echo/app/flag"
 	"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "mysql-response-trace",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "mysql-error-echo",
+	Short: "eBPF to help trace MySQL error responses at the kernel level",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		// Default level = INFO
 		level := slog.LevelInfo
