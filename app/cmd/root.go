@@ -28,7 +28,7 @@ to quickly create a Cobra application.`,
 			level = slog.LevelDebug
 		}
 		logger := slog.New(
-			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 				Level: level, // global level
 			}),
 		)

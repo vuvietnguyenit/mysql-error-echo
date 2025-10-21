@@ -10,7 +10,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	appflag "git.itim.vn/docker/mysql-response-trace/app/flag"
 	"git.itim.vn/docker/mysql-response-trace/app/internal/utils"
@@ -34,19 +33,15 @@ func (d *dataT) GetMsg() string {
 	s = bytes.ReplaceAll(s, []byte{0x00}, []byte{})
 	return string(s)
 }
-func (d *dataT) String() string {
+func (d *dataT) Print() {
 	if !utils.IsMySQLErrorMessage(d.Msg[:]) {
-		return ""
+		return
 	}
-	return fmt.Sprintf(
-		"[%s] respone: %s:%d -> %s:%d | size=%d | msg=%s",
-		time.Now().Format(time.RFC3339),
-		utils.IntToIP(d.Saddr),
-		d.Sport,
-		utils.IntToIP(d.Daddr),
-		d.Dport,
-		d.Size,
-		d.GetMsg(),
+	slog.Info("msql response",
+		"saddr", fmt.Sprintf("%s:%d", utils.IntToIP(d.Saddr), d.Sport),
+		"daddr", fmt.Sprintf("%s:%d", utils.IntToIP(d.Daddr), d.Dport),
+		"size", d.Size,
+		"msg", d.GetMsg(),
 	)
 }
 
@@ -114,8 +109,6 @@ func RunEbpfProg() error {
 			fmt.Println("HEX DUMP:")
 			fmt.Printf("%s\n\n", hex.Dump(e.Msg[:]))
 		}
-		if e.String() != "" {
-			fmt.Println(e.String())
-		}
+		e.Print()
 	}
 }
