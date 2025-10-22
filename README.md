@@ -9,6 +9,20 @@ Only error messages returned by MySQL are reported - successful (OK) responses a
 
 ![flow](static/img/image.png)
 
+### Logical architecture diagram
+
+```mermaid
+flowchart LR
+    A[We got a tcp_sendmsg event] -->|filter source port| B{Is mysql port ?}
+    B -->|True| D{0xFF in 
+        bytestream ?}
+    B -->|False| E[skip]
+    D -->|True| F[decode message 
+        and show it ]
+    D -->|False| E
+
+```
+
 ## Usage
 
 ```bash
