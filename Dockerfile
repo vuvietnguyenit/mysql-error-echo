@@ -27,7 +27,7 @@ RUN make
 FROM debian:bookworm-slim
 
 # Needed for kernel interaction and debugging
-RUN apt-get update && apt-get install -y --no-install-recommends bpftool iproute2 \
+RUN apt-get update && apt-get install -y --no-install-recommends bpftool iproute2 net-tools tcpdump \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

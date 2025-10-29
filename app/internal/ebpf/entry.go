@@ -47,22 +47,18 @@ func (d *dataT) Print() {
 
 func RunEbpfProg() error {
 
-	spec, err := ebpf.LoadCollectionSpec("app/bpf/mysql_response_trace.bpf.o")
-	if err != nil {
-		return fmt.Errorf("failed to load eBPF spec: %w", err)
+	var objs mysqlResponseTraceObjects
+	if err := loadMysqlResponseTraceObjects(&objs, nil); err != nil {
+		return err
 	}
-	objs := struct {
-		Program   *ebpf.Program `ebpf:"tcp_sendmsg"`
-		ConfigMap *ebpf.Map     `ebpf:"config_map"`
-		Events    *ebpf.Map     `ebpf:"events"`
-	}{}
+	defer objs.Close()
 
-	if err := spec.LoadAndAssign(&objs, nil); err != nil {
-		return fmt.Errorf("failed to load and assign objects: %w", err)
+	// Attach kprobe to tcp_connect
+	kp, err := link.Kprobe("tcp_sendmsg", objs.TcpSendmsg, nil)
+	if err != nil {
+		return err
 	}
-	defer objs.Program.Close()
-	defer objs.ConfigMap.Close()
-	defer objs.Events.Close()
+	defer kp.Close()
 
 	key := uint32(0)
 	configMap := objs.ConfigMap
@@ -70,13 +66,6 @@ func RunEbpfProg() error {
 		return err
 	}
 	slog.Debug("set port filter", slog.Any("port", appflag.Port))
-
-	// Attach kprobe to tcp_connect
-	kp, err := link.Kprobe("tcp_sendmsg", objs.Program, nil)
-	if err != nil {
-		return err
-	}
-	defer kp.Close()
 
 	rd, err := ringbuf.NewReader(objs.Events)
 	if err != nil {

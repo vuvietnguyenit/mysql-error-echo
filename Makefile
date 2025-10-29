@@ -18,19 +18,9 @@ LDFLAGS := -s -w
 all: build
 
 # Generate eBPF Go code via go:generate
-BPF_CLANG ?= clang
-		
-BPF_CFLAGS := -O2 -g -Wall -target bpf -D__TARGET_ARCH_x86  -Wno-error=unknown-warning-option -Wno-address-of-packed-member -Wno-unused-value -ferror-limit=0 
-BPF_SRC := app/bpf/mysql_response_trace.c
-BPF_OBJ := app/bpf/mysql_response_trace.bpf.o
-BPF_VMLINUX := app/bpf/vmlinux.h
-
 bpf-gen:
 	@echo ">> Generating eBPF Go code using go:generate"
-	$(BPF_CLANG) $(BPF_CFLAGS) \
-		-I$(dir $(BPF_VMLINUX)) \
-		-c $(BPF_SRC) -o $(BPF_OBJ)
-
+	@$(GO) generate ./app
 
 bpf-gen-btf:
 	@echo ">> generate vmlinux.h using bpftool"

@@ -30,7 +30,7 @@ func init() {
 func runProgram() {
 	err := ebpf.RunEbpfProg()
 	if err != nil {
-		slog.Error("failed to run eBPF program", err)
+		slog.Error("failed to run eBPF program", slog.Any("err", err))
 		os.Exit(1)
 	}
 }

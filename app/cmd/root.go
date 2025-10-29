@@ -8,6 +8,7 @@ import (
 	"os"
 
 	appflag "git.itim.vn/docker/mysql-error-echo/app/flag"
+	"github.com/cilium/ebpf/rlimit"
 	"github.com/spf13/cobra"
 )
 
@@ -27,11 +28,11 @@ var rootCmd = &cobra.Command{
 			}),
 		)
 		slog.SetDefault(logger)
-		// if err := rlimit.RemoveMemlock(); err != nil {
-		// 	return err
-		// } else {
-		// 	slog.Debug("set rlimit memlock to infinity")
-		// }
+		if err := rlimit.RemoveMemlock(); err != nil {
+			return err
+		} else {
+			slog.Debug("set rlimit memlock to infinity")
+		}
 		return nil
 	},
 }
