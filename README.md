@@ -5,6 +5,13 @@ Only error messages returned by MySQL are reported - successful (OK) responses a
 
 **Note: It only supports unencrypted MySQL traffic (when ssl-mode=DISABLE).**
 
+## System Requirements
+This tool requires a Linux environment with the following minimum specifications:
+
+- Kernel version: >= 5.2
+- Architecture: x86_64 (recommended)
+- Privileges: root or CAP_BPF / CAP_SYS_ADMIN (depending on use case)
+
 ## How It Works
 
 ### Logical architecture diagram
@@ -101,7 +108,19 @@ HEX DUMP:
 </details>
 
 ## Build
-Docker image
+
+Require:
+- Golang
+- bpftool
+To build to binary
+
 ```bash
-# make docker-build ARGS=mysql-error-echo:v1.0.0
+# make build 
+>> generate vmlinux.h using bpftool
+bpftool btf dump file /sys/kernel/btf/vmlinux format c > ././app/bpf/vmlinux.h
+>> Generating eBPF Go code using go:generate
+>> Building mysql-error-echo
+go build  -ldflags "-s -w" -o ./bin/mysql-error-echo ./app
 ```
+Or you can use image at:
+*...comming soon*
