@@ -1,7 +1,6 @@
 # mysql-error-echo
 
-MySQL Echo eBPF is an eBPF-powered observability tool that traces and inspects MySQL server error responses directly from the kernel, without modifying or instrumenting client applications. It attaches a kprobe to tcp_sendmsg to capture packets sent from the MySQL server to clients and inspects them only for error responses.
-Only error messages returned by MySQL are reported - successful (OK) responses are ignored
+*You only need to see any MySQL response errors to the client in this place. There’s no need to access the application or backend to find out what went wrong when a developer or anyone tries to connect.*
 
 **Note: It only supports unencrypted MySQL traffic (when ssl-mode=DISABLE).**
 
