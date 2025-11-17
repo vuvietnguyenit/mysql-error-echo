@@ -28,3 +28,8 @@ __debug*
 note.txt
 *_gobpf.*
 vmlinux.h
+note.md
+
+
+# Skip binary build file
+./mysql-error-echo
