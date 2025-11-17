@@ -51,4 +51,3 @@ For example, if you want to sniff error responses from MySQL server (on port 330
 ## Build
 Require:
 - Golang ver >= 1.25
-To build to binary
