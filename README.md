@@ -3,6 +3,8 @@
 Observability tool that traces and inspects MySQL server error responses directly use **packet sniffing**, without modifying or instrumenting client applications. It capture packets sent from the MySQL server to clients and inspects them on-the-fly only for error responses.
 From there, we can see all of error responses in just one place, that is very helpful if we have too many backends/clients are connecting to server.
 
+**This tool we can use to work with mysqlrouter/mysql/mariadb**
+
 **Note: It only supports unencrypted MySQL traffic (when ssl-mode=DISABLE).**
 
 ## How It Works
